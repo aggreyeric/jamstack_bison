@@ -10,14 +10,10 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /**
-   * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
-   * `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO
-   * 8601 standard for representation of dates and times using the Gregorian calendar.
-   */
+  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
   DateTime: any;
-  /** The `JSON` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  Json: any;
+  /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSONObject: any;
 };
 
 /** Payload returned if login or signup is successful */
@@ -29,6 +25,16 @@ export type AuthPayload = {
   user?: Maybe<User>;
 };
 
+/** A Book */
+export type Book = {
+  __typename?: 'Book';
+  content?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['ID']>;
+  image?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']>;
+};
+
 export type DateTimeFilter = {
   equals?: Maybe<Scalars['DateTime']>;
   gt?: Maybe<Scalars['DateTime']>;
@@ -36,8 +42,12 @@ export type DateTimeFilter = {
   in?: Maybe<Array<Scalars['DateTime']>>;
   lt?: Maybe<Scalars['DateTime']>;
   lte?: Maybe<Scalars['DateTime']>;
-  not?: Maybe<Scalars['DateTime']>;
+  not?: Maybe<NestedDateTimeFilter>;
   notIn?: Maybe<Array<Scalars['DateTime']>>;
+};
+
+export type EnumRoleNullableListFilter = {
+  equals?: Maybe<Array<Role>>;
 };
 
 export type Mutation = {
@@ -62,10 +72,30 @@ export type MutationSignupArgs = {
   data: SignupInput;
 };
 
-export enum OrderByArg {
-  ASC = 'asc',
-  DESC = 'desc',
-}
+export type NestedDateTimeFilter = {
+  equals?: Maybe<Scalars['DateTime']>;
+  gt?: Maybe<Scalars['DateTime']>;
+  gte?: Maybe<Scalars['DateTime']>;
+  in?: Maybe<Array<Scalars['DateTime']>>;
+  lt?: Maybe<Scalars['DateTime']>;
+  lte?: Maybe<Scalars['DateTime']>;
+  not?: Maybe<NestedDateTimeFilter>;
+  notIn?: Maybe<Array<Scalars['DateTime']>>;
+};
+
+export type NestedStringFilter = {
+  contains?: Maybe<Scalars['String']>;
+  endsWith?: Maybe<Scalars['String']>;
+  equals?: Maybe<Scalars['String']>;
+  gt?: Maybe<Scalars['String']>;
+  gte?: Maybe<Scalars['String']>;
+  in?: Maybe<Array<Scalars['String']>>;
+  lt?: Maybe<Scalars['String']>;
+  lte?: Maybe<Scalars['String']>;
+  not?: Maybe<NestedStringFilter>;
+  notIn?: Maybe<Array<Scalars['String']>>;
+  startsWith?: Maybe<Scalars['String']>;
+};
 
 /** A User Profile */
 export type Profile = {
@@ -127,9 +157,14 @@ export type QueryUsersArgs = {
   before?: Maybe<UserWhereUniqueInput>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<UserOrderByInput>;
+  orderBy?: Maybe<Array<UserOrderByInput>>;
   where?: Maybe<UserWhereInput>;
 };
+
+export enum QueryMode {
+  DEFAULT = 'default',
+  INSENSITIVE = 'insensitive',
+}
 
 export enum Role {
   ADMIN = 'ADMIN',
@@ -142,6 +177,11 @@ export type SignupInput = {
   profile?: Maybe<ProfileCreateOneWithoutUserInput>;
 };
 
+export enum SortOrder {
+  ASC = 'asc',
+  DESC = 'desc',
+}
+
 export type StringFilter = {
   contains?: Maybe<Scalars['String']>;
   endsWith?: Maybe<Scalars['String']>;
@@ -151,7 +191,8 @@ export type StringFilter = {
   in?: Maybe<Array<Scalars['String']>>;
   lt?: Maybe<Scalars['String']>;
   lte?: Maybe<Scalars['String']>;
-  not?: Maybe<Scalars['String']>;
+  mode?: Maybe<QueryMode>;
+  not?: Maybe<NestedStringFilter>;
   notIn?: Maybe<Array<Scalars['String']>>;
   startsWith?: Maybe<Scalars['String']>;
 };
@@ -178,15 +219,16 @@ export type UserCreateInput = {
 };
 
 export type UserCreaterolesInput = {
-  set?: Maybe<Array<Role>>;
+  set: Array<Role>;
 };
 
 export type UserOrderByInput = {
-  createdAt?: Maybe<OrderByArg>;
-  email?: Maybe<OrderByArg>;
-  id?: Maybe<OrderByArg>;
-  password?: Maybe<OrderByArg>;
-  updatedAt?: Maybe<OrderByArg>;
+  createdAt?: Maybe<SortOrder>;
+  email?: Maybe<SortOrder>;
+  id?: Maybe<SortOrder>;
+  password?: Maybe<SortOrder>;
+  roles?: Maybe<SortOrder>;
+  updatedAt?: Maybe<SortOrder>;
 };
 
 export type UserWhereInput = {
@@ -198,6 +240,7 @@ export type UserWhereInput = {
   OR?: Maybe<Array<UserWhereInput>>;
   password?: Maybe<StringFilter>;
   profile?: Maybe<ProfileWhereInput>;
+  roles?: Maybe<EnumRoleNullableListFilter>;
   updatedAt?: Maybe<DateTimeFilter>;
 };
 
